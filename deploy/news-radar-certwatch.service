@@ -1,0 +1,7 @@
+[Unit]
+Description=News Radar certificate watcher
+After=network-online.target nginx.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/news-radar-certwatch.sh

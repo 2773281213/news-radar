@@ -1,0 +1,14 @@
+node_modules/
+dist/
+data/
+data-smoke/
+.run-data/
+.env
+.env.*
+!.env.example
+*.log
+coverage/
+playwright-report/
+test-results/
+.DS_Store
+.admin-token

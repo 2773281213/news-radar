@@ -1,0 +1,276 @@
+{
+  "schemaVersion": 1,
+  "reviewedAt": "2026-07-27T00:00:00.000Z",
+  "families": [
+    {
+      "id": "cn-central-government",
+      "name": "中华人民共和国中央政府机构",
+      "kind": "ownership",
+      "note": "归并国务院组成部门及其直属官方发布渠道；不同部门仍可能具有不同专业职责。"
+    },
+    {
+      "id": "hksar-government",
+      "name": "香港特别行政区政府",
+      "kind": "ownership",
+      "note": "香港特区政府及新闻处的第一方发布渠道。"
+    },
+    {
+      "id": "xinhua-wire",
+      "name": "新华社",
+      "kind": "wire",
+      "note": "新华社稿件及其直接发布渠道应视为同一通讯社稿源。"
+    },
+    {
+      "id": "china-daily",
+      "name": "中国日报社",
+      "kind": "ownership",
+      "note": "归并 China Daily 及其地区版本。"
+    },
+    {
+      "id": "people-daily",
+      "name": "人民日报社",
+      "kind": "ownership",
+      "note": "归并人民网、人民日报及其直属发布渠道。"
+    },
+    {
+      "id": "china-news-service-wire",
+      "name": "中国新闻社",
+      "kind": "wire",
+      "note": "中国新闻社稿件及中新网直接发布渠道视为同一通讯社稿源。"
+    },
+    {
+      "id": "china-media-group",
+      "name": "中央广播电视总台",
+      "kind": "ownership",
+      "note": "归并央视、央广、国际台与 CGTN 等总台渠道。"
+    },
+    {
+      "id": "scmp",
+      "name": "South China Morning Post",
+      "kind": "ownership",
+      "note": "SCMP Publishers Ltd；2016 年起属于阿里巴巴集团。"
+    },
+    {
+      "id": "hkfp",
+      "name": "Hong Kong Free Press",
+      "kind": "ownership",
+      "note": "香港本地英文非营利新闻机构的自有发布渠道。"
+    },
+    {
+      "id": "shanghai-united-media",
+      "name": "上海报业集团",
+      "kind": "ownership",
+      "note": "澎湃新闻与 Sixth Tone 同属上海报业集团，交叉核验时不可计为完全独立所有权。"
+    },
+    {
+      "id": "initium-media",
+      "name": "端传媒",
+      "kind": "ownership",
+      "note": "端传媒自有中文新闻与评论渠道。"
+    },
+    {
+      "id": "caixin-media",
+      "name": "财新传媒",
+      "kind": "ownership",
+      "note": "归并财新中文与 Caixin Global 渠道。"
+    },
+    {
+      "id": "united-nations",
+      "name": "联合国",
+      "kind": "ownership",
+      "note": "联合国新闻、日内瓦办事处等第一方渠道属于同一联合国体系。"
+    },
+    {
+      "id": "who",
+      "name": "世界卫生组织",
+      "kind": "ownership",
+      "note": "世界卫生组织总部与区域办事处的第一方渠道。"
+    },
+    {
+      "id": "european-union",
+      "name": "欧盟机构",
+      "kind": "ownership",
+      "note": "用于标记欧洲议会、欧盟理事会等同属欧盟制度体系的第一方发布。"
+    },
+    {
+      "id": "us-federal-reserve",
+      "name": "美国联邦储备委员会",
+      "kind": "ownership",
+      "note": "联邦储备委员会及其官方发布渠道。"
+    },
+    {
+      "id": "us-sec",
+      "name": "美国证券交易委员会",
+      "kind": "ownership",
+      "note": "美国证券交易委员会第一方发布渠道。"
+    },
+    {
+      "id": "us-ftc",
+      "name": "美国联邦贸易委员会",
+      "kind": "ownership",
+      "note": "美国联邦贸易委员会第一方发布渠道。"
+    },
+    {
+      "id": "uk-government",
+      "name": "英国政府",
+      "kind": "ownership",
+      "note": "GOV.UK 汇集的英国政府部门第一方公告。"
+    },
+    {
+      "id": "us-executive",
+      "name": "美国总统行政办公室",
+      "kind": "ownership",
+      "note": "白宫及总统行政办公室第一方发布渠道。"
+    },
+    {
+      "id": "bbc",
+      "name": "BBC",
+      "kind": "ownership",
+      "note": "英国广播公司新闻渠道。"
+    },
+    {
+      "id": "guardian",
+      "name": "Guardian Media Group",
+      "kind": "ownership",
+      "note": "Guardian Media Group 由 Scott Trust Limited 持有；网站与社交账号应归并。"
+    },
+    {
+      "id": "al-jazeera",
+      "name": "Al Jazeera Media Network",
+      "kind": "ownership",
+      "note": "半岛电视台媒体网络及其各语言渠道。"
+    },
+    {
+      "id": "dw",
+      "name": "Deutsche Welle",
+      "kind": "ownership",
+      "note": "德国依法设立的国际公共广播机构。"
+    },
+    {
+      "id": "france-medias-monde",
+      "name": "France Médias Monde",
+      "kind": "ownership",
+      "note": "法国国有国际媒体集团，旗下包括 France 24 与 RFI。"
+    },
+    {
+      "id": "npr",
+      "name": "NPR",
+      "kind": "ownership",
+      "note": "美国非营利公共广播网络。"
+    },
+    {
+      "id": "nhk",
+      "name": "NHK",
+      "kind": "ownership",
+      "note": "日本公共广播机构。"
+    },
+    {
+      "id": "cbc",
+      "name": "CBC/Radio-Canada",
+      "kind": "ownership",
+      "note": "加拿大公共广播皇冠公司。"
+    },
+    {
+      "id": "africanews",
+      "name": "Africanews",
+      "kind": "ownership",
+      "note": "用于归并 Africanews 自有地区新闻渠道。"
+    },
+    {
+      "id": "middle-east-eye",
+      "name": "Middle East Eye",
+      "kind": "ownership",
+      "note": "Middle East Eye 自有中东地区新闻渠道。"
+    },
+    {
+      "id": "times-of-israel",
+      "name": "The Times of Israel",
+      "kind": "ownership",
+      "note": "The Times of Israel 自有以色列本地新闻渠道。"
+    },
+    {
+      "id": "kyiv-independent",
+      "name": "The Kyiv Independent",
+      "kind": "ownership",
+      "note": "The Kyiv Independent 自有乌克兰本地新闻渠道。"
+    },
+    {
+      "id": "associated-press",
+      "name": "Associated Press",
+      "kind": "wire",
+      "note": "AP 为非营利新闻合作社；其各发布渠道视为同一通讯社稿源。"
+    },
+    {
+      "id": "reuters",
+      "name": "Reuters",
+      "kind": "wire",
+      "note": "Reuters 属于 Thomson Reuters；其各渠道视为同一通讯社稿源。"
+    },
+    {
+      "id": "afp",
+      "name": "Agence France-Presse",
+      "kind": "wire",
+      "note": "AFP 各语言与平台渠道视为同一通讯社稿源。"
+    },
+    {
+      "id": "german-federal-institutions",
+      "name": "德国联邦机构",
+      "kind": "ownership",
+      "note": "归并德国联邦政府与联邦议院第一方社交渠道；不表示其宪制职能相同。"
+    },
+    {
+      "id": "russian-government",
+      "name": "俄罗斯联邦政府机构",
+      "kind": "ownership",
+      "note": "克里姆林宫、外交部与国防部均为俄罗斯当事方第一方渠道。"
+    },
+    {
+      "id": "ukrainian-government",
+      "name": "乌克兰政府机构",
+      "kind": "ownership",
+      "note": "乌克兰总统府与国防部均为乌克兰当事方第一方渠道。"
+    },
+    {
+      "id": "israel-defense-forces",
+      "name": "以色列国防军",
+      "kind": "ownership",
+      "note": "以色列国防军第一方声明渠道。"
+    },
+    {
+      "id": "irna",
+      "name": "Islamic Republic News Agency",
+      "kind": "wire",
+      "note": "伊朗伊斯兰共和国官方通讯社稿件及其直接发布渠道。"
+    },
+    {
+      "id": "usgs",
+      "name": "U.S. Geological Survey",
+      "kind": "ownership",
+      "note": "美国地质调查局地震数据与公告渠道。"
+    },
+    {
+      "id": "gdacs",
+      "name": "Global Disaster Alert and Coordination System",
+      "kind": "ownership",
+      "note": "GDACS 由联合国与欧盟委员会相关体系合作运行，提供全球灾害告警。"
+    },
+    {
+      "id": "nasa",
+      "name": "NASA",
+      "kind": "ownership",
+      "note": "美国国家航空航天局第一方科学与地球观测渠道。"
+    },
+    {
+      "id": "noaa",
+      "name": "NOAA",
+      "kind": "ownership",
+      "note": "美国国家海洋和大气管理局及国家飓风中心第一方渠道。"
+    },
+    {
+      "id": "gdelt",
+      "name": "The GDELT Project",
+      "kind": "ownership",
+      "note": "GDELT 全球新闻事件索引与公开 API。"
+    }
+  ]
+}

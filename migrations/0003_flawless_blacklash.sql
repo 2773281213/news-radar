@@ -1,0 +1,1 @@
+CREATE INDEX `idx_workflow_cases_health` ON `workflow_cases` (`status`,`completed_at`);

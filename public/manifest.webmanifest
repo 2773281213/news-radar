@@ -1,0 +1,24 @@
+{
+  "name": "新闻雷达 News Radar",
+  "short_name": "新闻雷达",
+  "description": "三省拟稿、门下封驳、尚书执行与六部多值分流的实时新闻 Agent",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f3ead8",
+  "theme_color": "#211a14",
+  "icons": [
+    {
+      "src": "/icons/radar.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/radar-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}

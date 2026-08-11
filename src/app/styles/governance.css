@@ -1,0 +1,572 @@
+.brand-seal,
+.ministry-seal,
+.seal-word {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 2px solid currentColor;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font-family: var(--font-display);
+  font-weight: 900;
+  line-height: 1;
+  transform: rotate(-1.5deg);
+}
+
+.brand-seal {
+  width: 2.65rem;
+  height: 2.65rem;
+  border-color: #d86151;
+  color: #f3b6a8;
+  font-size: 1.35rem;
+}
+
+.brand-seal-small {
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
+}
+
+.ministry-seal-sm {
+  width: 1.65rem;
+  height: 1.65rem;
+  border-width: 1px;
+  font-size: 0.85rem;
+}
+
+.ministry-seal-md {
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1.2rem;
+}
+
+.ministry-seal-lg {
+  width: 4rem;
+  height: 4rem;
+  font-size: 2rem;
+}
+
+.workflow-cutoff,
+.ministry-cutoff {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  border-top: 1px solid var(--rule-strong);
+  border-bottom: 1px solid var(--rule);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--accent-soft) 28%, transparent), transparent 38%),
+    var(--surface-strong);
+  color: var(--ink-soft);
+  padding: 0.8rem 0.9rem;
+}
+
+.workflow-cutoff .seal-word {
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1.15rem;
+}
+
+.workflow-cutoff > div {
+  display: grid;
+}
+
+.workflow-cutoff time,
+.ministry-cutoff time {
+  color: var(--ink-faint);
+  font-family: var(--font-code);
+  font-size: 0.7rem;
+}
+
+.workflow-cutoff code {
+  margin-left: auto;
+}
+
+.workflow-stage-list {
+  display: grid;
+  gap: 0.8rem;
+  list-style: none;
+  margin: 1.2rem 0;
+  padding: 0;
+  counter-reset: stage;
+}
+
+.workflow-stage-card {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  gap: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--rule-strong);
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+  background:
+    radial-gradient(circle at 100% 0, color-mix(in srgb, var(--accent) 10%, transparent), transparent 11rem),
+    var(--surface);
+  box-shadow: var(--shadow-tight);
+  padding: 1.1rem;
+}
+
+.workflow-stage-card.is-active {
+  border-color: var(--accent);
+}
+
+.workflow-stage-card.is-active::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent);
+  content: "";
+}
+
+.workflow-stage-index {
+  color: color-mix(in srgb, var(--accent) 38%, var(--rule));
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.workflow-stage-card header p {
+  margin-bottom: 0.1rem;
+  color: var(--accent);
+  font-family: var(--font-code);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.workflow-stage-card header h2 {
+  margin-bottom: 0.35rem;
+  font-size: 1.65rem;
+}
+
+.workflow-stage-card header span {
+  color: var(--ink-soft);
+}
+
+.workflow-stage-card dl,
+.ministry-route-card dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--rule);
+}
+
+.workflow-stage-card dl div,
+.ministry-route-card dl div {
+  min-width: 0;
+  background: var(--surface-strong);
+  padding: 0.55rem;
+}
+
+.workflow-stage-card dt,
+.ministry-route-card dt {
+  color: var(--ink-faint);
+  font-size: 0.64rem;
+}
+
+.workflow-stage-card dd,
+.ministry-route-card dd {
+  margin: 0.1rem 0 0;
+  font-family: var(--font-code);
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.workflow-stage-action {
+  border-top: 1px solid var(--rule);
+  padding-top: 0.7rem;
+}
+
+.ministry-grid {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.ministry-route-card {
+  display: grid;
+  min-width: 0;
+  gap: 0.85rem;
+  border: 1px solid var(--rule);
+  clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--surface) 94%, transparent), var(--surface-strong));
+  box-shadow: var(--shadow-tight);
+  padding: 1rem;
+}
+
+.ministry-route-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.ministry-route-heading h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.65rem;
+}
+
+.ministry-route-card > p {
+  min-height: 3.2em;
+  color: var(--ink-soft);
+  margin: 0;
+}
+
+.ministry-route-card dl {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ministry-card-link {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--rule);
+  color: var(--accent);
+  font-weight: 800;
+  padding-top: 0.7rem;
+  text-decoration: none;
+}
+
+.routing-byline {
+  display: grid;
+  gap: 0.45rem;
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent-soft) 28%, var(--surface-strong));
+  padding: 0.55rem 0.65rem;
+}
+
+.routing-labels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.65rem;
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+}
+
+.routing-labels strong {
+  color: var(--ink);
+}
+
+.routing-byline details {
+  color: var(--ink-soft);
+  font-size: 0.7rem;
+}
+
+.routing-byline summary {
+  width: fit-content;
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.routing-byline ul {
+  margin: 0.45rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.governance-trace {
+  display: grid;
+  min-width: 0;
+  gap: 0.55rem;
+  border-top: 2px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface-strong);
+  padding: 0.7rem 0;
+}
+
+.governance-trace.is-missing {
+  border-top-color: var(--warning);
+  color: var(--ink-soft);
+  padding-inline: 0.7rem;
+}
+
+.governance-trace-head {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.55rem;
+  color: var(--ink-faint);
+  font-family: var(--font-code);
+  font-size: 0.64rem;
+  padding-inline: 0.7rem;
+}
+
+.governance-trace-head > span {
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.governance-trace-head time {
+  margin-left: auto;
+}
+
+.governance-trace-stages {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  list-style: none;
+  margin: 0;
+  background: var(--rule);
+  padding: 0;
+}
+
+.governance-trace-stages li {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 0.18rem;
+  background: var(--surface);
+  padding: 0.58rem 0.65rem 0.58rem 0.78rem;
+}
+
+.governance-trace-stages li::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--rule-strong);
+  content: "";
+}
+
+.governance-trace-stages li.is-complete::before { background: var(--good); }
+.governance-trace-stages li.is-remanded::before { background: var(--warning); }
+.governance-trace-stages li.is-active::before { background: var(--accent); }
+
+.governance-trace-stages span,
+.governance-trace-stages small {
+  overflow-wrap: anywhere;
+  color: var(--ink-faint);
+  font-size: 0.62rem;
+}
+
+.governance-trace-stages strong {
+  font-size: 0.76rem;
+}
+
+.governance-source-trail {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.65rem;
+  color: var(--ink-faint);
+  font-size: 0.66rem;
+  padding-inline: 0.7rem;
+}
+
+.governance-source-trail > strong {
+  color: var(--ink);
+}
+
+.governance-source-trail a {
+  display: inline-flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: 0.3rem;
+  color: var(--evidence-ink);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.governance-source-trail a time {
+  color: var(--ink-faint);
+  font-family: var(--font-code);
+  font-size: 0.58rem;
+  font-weight: 400;
+}
+
+.panel.workflow-audit-panel {
+  display: grid;
+  gap: 0.9rem;
+  border-top: 4px solid var(--accent);
+}
+
+.workflow-audit-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--ink-soft);
+  font-size: 0.72rem;
+}
+
+.workflow-audit-status time {
+  margin-left: auto;
+  font-family: var(--font-code);
+}
+
+.review-decision {
+  border-left: 4px solid var(--rule-strong);
+  background: var(--surface-strong);
+  padding: 0.75rem;
+}
+
+.review-decision.is-approved {
+  border-left-color: var(--good);
+}
+
+.review-decision.is-remanded {
+  border-left-color: var(--warning);
+}
+
+.review-decision p {
+  color: var(--ink-soft);
+  margin: 0.3rem 0;
+}
+
+.review-decision ul {
+  margin-bottom: 0;
+  padding-left: 1.15rem;
+}
+
+.workflow-transition-list {
+  position: relative;
+  display: grid;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.workflow-transition-list li {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr);
+  gap: 0.6rem;
+  border-top: 1px solid var(--rule);
+  padding: 0.7rem 0;
+}
+
+.workflow-transition-list li > span {
+  display: grid;
+  width: 1.8rem;
+  height: 1.8rem;
+  place-items: center;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-family: var(--font-code);
+  font-size: 0.65rem;
+}
+
+.workflow-transition-list p,
+.workflow-transition-list time {
+  color: var(--ink-faint);
+  font-size: 0.7rem;
+  margin: 0.2rem 0 0;
+}
+
+.ministry-hero {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  align-items: start;
+}
+
+.ministry-hero > .ministry-seal {
+  margin-top: 0.8rem;
+}
+
+.ministry-hero .page-header {
+  min-width: 0;
+  padding-top: 0;
+}
+
+.ministry-switcher {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.ministry-switcher a {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.ministry-switcher a.is-active,
+.ministry-switcher a[aria-current="page"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.ministry-cutoff {
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+@media (min-width: 640px) {
+  .ministry-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ministry-switcher {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 880px) {
+  .workflow-stage-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .workflow-stage-card {
+    grid-template-rows: auto auto 1fr auto;
+  }
+
+  .ministry-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 420px) {
+  .workflow-cutoff {
+    align-items: flex-start;
+  }
+
+  .workflow-cutoff code {
+    display: none;
+  }
+
+  .ministry-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .ministry-hero > .ministry-seal {
+    margin: 0;
+  }
+
+  .ministry-switcher {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .governance-trace-stages {
+    grid-template-columns: 1fr;
+  }
+
+  .governance-trace-head time {
+    width: 100%;
+    margin-left: 0;
+  }
+}
+
+@media (forced-colors: active) {
+  .brand-seal,
+  .ministry-seal,
+  .workflow-stage-card,
+  .ministry-route-card,
+  .ministry-switcher a {
+    forced-color-adjust: auto;
+  }
+}

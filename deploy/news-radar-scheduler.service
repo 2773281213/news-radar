@@ -1,0 +1,31 @@
+[Unit]
+Description=News Radar ingestion and Three Departments workflow scheduler
+After=network-online.target news-radar.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/news-radar/current
+EnvironmentFile=/etc/news-radar.env
+ExecStart=/usr/bin/node /opt/news-radar/current/dist/server/scheduler-worker.mjs
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+KillSignal=SIGTERM
+Nice=5
+CPUWeight=1000
+IOWeight=100
+IOSchedulingClass=best-effort
+IOSchedulingPriority=7
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/news-radar/data
+UMask=0027
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

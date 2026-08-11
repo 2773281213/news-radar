@@ -1,0 +1,434 @@
+/* 朝堂工作台：借鉴 ArchiveAssistant 的状态驱动主从窗格与折页奏折，资源与实现独立。 */
+.court-page {
+  min-height: calc(100dvh - 64px);
+  background: var(--ivory);
+}
+
+.court-masthead,
+.court-cutoff,
+.workspace-pane-tabs {
+  width: min(100%, 1760px);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.court-masthead {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1.2rem;
+  border-bottom: 1px solid var(--bronze);
+  padding: clamp(1.25rem, 3vw, 2.7rem) clamp(0.9rem, 2.2vw, 2rem) 1.1rem;
+}
+
+.court-masthead h1 {
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 4.8rem);
+  letter-spacing: 0;
+}
+
+.court-masthead p:not(.eyebrow) {
+  max-width: 58ch;
+  color: var(--ink-soft);
+  margin: 0.55rem 0 0;
+}
+
+.court-masthead-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.court-rule-chip {
+  border: 1px solid var(--bronze);
+  background: var(--light-gold);
+  color: var(--umber);
+  font-family: var(--font-code);
+  font-size: 0.67rem;
+  padding: 0.45rem 0.6rem;
+  white-space: nowrap;
+}
+
+.court-cutoff {
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  gap: 0.65rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-soft);
+  font-size: 0.76rem;
+  padding: 0.55rem clamp(0.9rem, 2.2vw, 2rem);
+}
+
+.court-cutoff strong {
+  color: var(--ink);
+}
+
+.court-cutoff-note {
+  margin-left: auto;
+  color: var(--ink-faint);
+  font-size: 0.68rem;
+}
+
+.court-seal-mark,
+.artifact-stamp {
+  display: inline-grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--cinnabar);
+  color: var(--cinnabar);
+  font-family: var(--font-display);
+  font-weight: 900;
+  line-height: 1;
+  transform: rotate(-2deg);
+}
+
+.court-seal-mark {
+  width: 1.8rem;
+  height: 1.8rem;
+  font-size: 1rem;
+}
+
+.workspace-pane-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  border-bottom: 1px solid var(--bronze);
+  padding: 0 clamp(0.9rem, 2.2vw, 2rem);
+}
+
+.workspace-pane-tabs button {
+  min-height: 42px;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: transparent;
+  color: var(--ink-faint);
+  font-weight: 800;
+  padding: 0.45rem 0.7rem;
+}
+
+.workspace-pane-tabs button span {
+  display: block;
+  color: var(--bronze);
+  font-family: var(--font-code);
+  font-size: 0.57rem;
+}
+
+.workspace-pane-tabs button.is-active {
+  border-bottom-color: var(--cinnabar);
+  color: var(--accent-strong);
+}
+
+.court-workspace {
+  display: grid;
+  width: min(100%, 1760px);
+  margin: 0 auto;
+}
+
+.court-pane {
+  min-width: 0;
+  background: color-mix(in srgb, var(--ivory) 93%, var(--parchment));
+  padding: clamp(0.85rem, 1.8vw, 1.45rem);
+}
+
+.court-pane-header {
+  display: flex;
+  min-width: 0;
+  align-items: start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.8rem;
+}
+
+.court-pane-header h2 {
+  overflow: hidden;
+  margin: 0;
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: clamp(1.15rem, 2vw, 1.65rem);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.court-pane-header p:not(.eyebrow) {
+  overflow: hidden;
+  color: var(--ink-faint);
+  font-size: 0.71rem;
+  margin: 0.2rem 0 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.court-pane-action {
+  flex: 0 0 auto;
+}
+
+.court-pane-action a,
+.review-open-link {
+  color: var(--accent-strong);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.office-stack {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+}
+
+.office-strip {
+  display: grid;
+  grid-template-columns: 1.8rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.55rem;
+  border-left: 3px solid var(--bronze);
+  background: var(--surface);
+  padding: 0.55rem 0.65rem;
+}
+
+.office-strip.office-zhongshu { border-left-color: #8c6a3d; }
+.office-strip.office-menxia { border-left-color: var(--cinnabar); }
+.office-strip.office-shangshu { border-left-color: #567a7a; }
+
+.office-index {
+  color: var(--bronze);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+
+.office-strip strong,
+.office-strip small {
+  display: block;
+}
+
+.office-strip strong { font-size: 0.78rem; }
+.office-strip small { color: var(--ink-faint); font-size: 0.65rem; }
+.office-strip b { color: var(--accent-strong); font-family: var(--font-code); font-size: 1rem; }
+
+.docket-note {
+  border: 1px solid var(--bronze);
+  background: var(--light-gold);
+  margin-top: 0.85rem;
+  padding: 0.75rem;
+}
+
+.docket-note strong { display: block; color: var(--ink); font-family: var(--font-display); font-size: 1rem; }
+.docket-note p:last-child { color: var(--umber); font-size: 0.72rem; margin: 0.25rem 0 0; }
+
+.ministry-fold-index {
+  margin-top: 1.15rem;
+}
+
+.ministry-fold-index > header,
+.report-section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.ministry-fold-index h2,
+.report-section-head h3 { margin: 0; font-family: var(--font-display); font-size: 1.1rem; }
+.ministry-fold-index > header > a { color: var(--accent-strong); font-size: 0.7rem; font-weight: 800; text-decoration: none; }
+
+.ministry-fold-list {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.ministry-index-fold {
+  display: grid;
+  grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+  color: inherit;
+  padding: 0.38rem 0.2rem;
+  text-decoration: none;
+}
+
+.ministry-index-fold:hover { background: color-mix(in srgb, var(--light-gold) 45%, transparent); color: inherit; }
+.ministry-index-fold strong,
+.ministry-index-fold small { display: block; }
+.ministry-index-fold strong { font-size: 0.73rem; }
+.ministry-index-fold small { overflow: hidden; color: var(--ink-faint); font-size: 0.6rem; text-overflow: ellipsis; white-space: nowrap; }
+.ministry-index-fold b { color: var(--accent-strong); font-family: var(--font-code); font-size: 0.75rem; }
+
+.court-quick-links {
+  display: grid;
+  gap: 0.15rem;
+  border-top: 1px solid var(--rule);
+  margin-top: 1.1rem;
+  padding-top: 0.6rem;
+}
+
+.court-quick-links a { display: flex; justify-content: space-between; color: var(--ink-soft); font-size: 0.68rem; padding: 0.25rem 0; text-decoration: none; }
+.court-quick-links a:hover { color: var(--accent-strong); }
+
+.memorial-list-pane { border-right: 1px solid var(--rule); border-left: 1px solid var(--rule); }
+.memorial-list { display: grid; gap: 0.65rem; margin-top: 0.85rem; }
+
+.memorial-card {
+  position: relative;
+  display: grid;
+  min-width: 0;
+  gap: 0.42rem;
+  border: 1px solid var(--bronze);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: 4px 5px 0 color-mix(in srgb, var(--bronze) 30%, transparent);
+  text-align: left;
+  padding: 0.82rem 0.82rem 0.72rem 1rem;
+  transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+.memorial-card:hover { border-color: var(--cinnabar); transform: translateY(-2px); }
+.memorial-card.is-selected { border-color: var(--cinnabar); box-shadow: 5px 6px 0 color-mix(in srgb, var(--cinnabar) 35%, transparent); }
+.memorial-corner { position: absolute; top: 0.55rem; right: 0.65rem; color: var(--bronze); font-family: var(--font-code); font-size: 0.6rem; }
+.memorial-card-head { display: flex; justify-content: space-between; gap: 0.5rem; padding-right: 1.7rem; color: var(--accent-strong); font-size: 0.65rem; font-weight: 800; }
+.memorial-card-head time { color: var(--ink-faint); font-weight: 500; }
+.memorial-card > strong { max-width: 32ch; font-family: var(--font-display); font-size: 1.05rem; line-height: 1.35; }
+.memorial-card-summary { display: -webkit-box; overflow: hidden; color: var(--ink-soft); font-size: 0.74rem; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.memorial-card-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.55rem; border-top: 1px solid var(--rule); color: var(--ink-faint); font-size: 0.63rem; padding-top: 0.45rem; }
+.memorial-card-foot .badge { font-size: 0.6rem; }
+
+.memorial-list-footer { display: flex; justify-content: space-between; gap: 0.5rem; border-top: 1px solid var(--rule); color: var(--ink-faint); font-size: 0.66rem; margin-top: 1rem; padding-top: 0.65rem; }
+.memorial-list-footer a { color: var(--accent-strong); font-weight: 800; text-decoration: none; }
+
+.review-pane { background: var(--surface); }
+.review-context-strip { display: flex; justify-content: space-between; gap: 0.7rem; border-bottom: 1px solid var(--rule); color: var(--ink-soft); font-size: 0.72rem; padding: 0.65rem 0; }
+.review-context-strip span:first-child { max-width: 68ch; }
+.review-context-strip span:last-child { flex: 0 0 auto; color: var(--ink-faint); font-family: var(--font-code); font-size: 0.62rem; }
+
+/* 审议产物 */
+.workflow-audit-panel { margin-top: 0.9rem; border: 0; border-top: 3px solid var(--cinnabar); background: transparent; box-shadow: none; padding: 0; }
+.workflow-audit-panel > .section-header { border-bottom: 1px solid var(--rule); padding-bottom: 0.65rem; }
+.workflow-audit-panel > .section-header h2 { font-size: 1.25rem; }
+.workflow-audit-status { padding: 0.55rem 0; }
+.governance-artifact { border: 1px solid var(--rule); background: var(--ivory); margin-top: 0.65rem; padding: 0.82rem; }
+.governance-artifact > header { display: flex; align-items: center; gap: 0.62rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.55rem; }
+.governance-artifact > header h3 { margin: 0; font-family: var(--font-display); font-size: 1.08rem; }
+.governance-artifact > header .eyebrow { margin-bottom: 0.08rem; }
+.artifact-stamp { width: 2.35rem; height: 2.35rem; font-size: 0.82rem; }
+.governance-artifact > p { color: var(--ink-soft); font-size: 0.75rem; margin: 0.62rem 0 0; }
+.artifact-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; background: var(--rule); margin-top: 0.65rem; }
+.artifact-metrics span { display: grid; gap: 0.12rem; background: var(--surface-strong); padding: 0.42rem; }
+.artifact-metrics small { color: var(--ink-faint); font-size: 0.59rem; }
+.artifact-metrics strong { color: var(--accent-strong); font-family: var(--font-code); font-size: 0.93rem; }
+.artifact-action-list { display: flex; flex-wrap: wrap; gap: 0.3rem; list-style: none; margin: 0.62rem 0 0; padding: 0; }
+.artifact-action-list li { border: 1px solid var(--bronze); color: var(--umber); font-size: 0.62rem; padding: 0.25rem 0.38rem; }
+.review-decision { border-left: 4px solid var(--cinnabar); }
+.review-decision.is-approved { border-left-color: #4c8b63; }
+.review-decision.is-remanded { background: #fff8ee; }
+.dispatch-action-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.35rem; margin-top: 0.65rem; }
+.dispatch-action-grid > div { display: grid; gap: 0.25rem; border: 1px solid var(--rule); background: var(--surface-strong); padding: 0.48rem; }
+.dispatch-action-grid > div > span { color: var(--ink-faint); font-size: 0.63rem; }
+.dispatch-action-grid .badge { width: fit-content; font-size: 0.61rem; }
+.ministry-digest { border-left: 3px solid #567a7a; background: #eaf1ee; margin-top: 0.65rem; padding: 0.55rem 0.65rem; }
+.ministry-digest strong { font-size: 0.72rem; }
+.ministry-digest p { color: var(--ink-soft); font-size: 0.7rem; margin: 0.22rem 0; }
+.ministry-digest small { color: var(--umber); font-size: 0.63rem; }
+.ministry-report-section { margin-top: 0.9rem; }
+.report-section-head { border-bottom: 1px solid var(--rule); padding-bottom: 0.5rem; }
+.report-progress { color: var(--ink-faint); font-family: var(--font-code); font-size: 0.62rem; }
+.ministry-report-list-grid { display: grid; gap: 0.4rem; margin-top: 0.55rem; }
+.ministry-report-card { border: 1px solid var(--rule); background: var(--surface); }
+.ministry-report-card.status-completed { border-left: 3px solid #4c8b63; }
+.ministry-report-card.status-blocked { border-left: 3px solid var(--bronze); }
+.ministry-report-card.status-failed { border-left: 3px solid var(--cinnabar); }
+.ministry-report-card details > summary { display: flex; min-height: 3rem; align-items: center; gap: 0.52rem; cursor: pointer; list-style: none; padding: 0.42rem 0.52rem; }
+.ministry-report-card details > summary::-webkit-details-marker { display: none; }
+.ministry-report-card details > summary::after { margin-left: auto; color: var(--bronze); content: "+"; font-family: var(--font-code); }
+.ministry-report-card details[open] > summary::after { content: "−"; }
+.ministry-report-heading { display: flex; min-width: 0; flex: 1 1 auto; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.ministry-report-heading > span { display: grid; min-width: 0; }
+.ministry-report-heading strong { overflow: hidden; font-size: 0.75rem; text-overflow: ellipsis; white-space: nowrap; }
+.ministry-report-heading small { color: var(--ink-faint); font-size: 0.59rem; }
+.ministry-report-body { border-top: 1px solid var(--rule); padding: 0.62rem 0.7rem 0.72rem; }
+.ministry-report-event { color: var(--accent-strong); font-size: 0.69rem; font-weight: 800; text-decoration: none; }
+.ministry-report-mandate { color: var(--ink-faint); font-size: 0.64rem; margin: 0.35rem 0; }
+.ministry-report-error { border-left: 3px solid var(--cinnabar); color: var(--accent-strong); font-size: 0.68rem; padding-left: 0.45rem; }
+.ministry-report-list { margin-top: 0.52rem; }
+.ministry-report-list h4 { margin: 0; color: var(--ink); font-size: 0.66rem; }
+.ministry-report-list ul { margin: 0.2rem 0 0; padding-left: 1rem; }
+.ministry-report-list li { color: var(--ink-soft); font-size: 0.67rem; }
+.ministry-report-list.tone-risk h4 { color: var(--accent-strong); }
+.ministry-report-list.tone-gap h4 { color: #8c6a3d; }
+.ministry-report-list.tone-action h4 { color: #567a7a; }
+.ministry-report-card footer { display: flex; justify-content: space-between; gap: 0.5rem; border-top: 1px solid var(--rule); color: var(--ink-faint); font-family: var(--font-code); font-size: 0.57rem; margin-top: 0.55rem; padding-top: 0.42rem; }
+.citation-section-compact { margin-top: 0.55rem; }
+.citation-section-compact h3 { font-size: 0.66rem; }
+.citation-section-compact .citation-list li { padding: 0.35rem 0; }
+.citation-section-compact .citation-title { font-size: 0.65rem; }
+.citation-section-compact .citation-list p { font-size: 0.58rem; }
+.audit-log { border-top: 1px solid var(--rule); margin-top: 0.8rem; padding-top: 0.62rem; }
+.audit-log > summary { color: var(--accent-strong); cursor: pointer; font-size: 0.68rem; font-weight: 800; }
+.audit-log .workflow-transition-list { margin-top: 0.35rem; }
+
+.ministry-report-desk {
+  border-top: 3px solid var(--cinnabar);
+  background: color-mix(in srgb, var(--surface) 88%, var(--parchment));
+  padding: clamp(0.9rem, 2vw, 1.35rem);
+}
+
+.ministry-report-desk-grid {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+@media (min-width: 880px) {
+  .ministry-report-desk-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 839px) {
+  .court-masthead { align-items: start; flex-direction: column; }
+  .court-masthead-actions { width: 100%; justify-content: space-between; }
+  .court-cutoff-note { display: none; }
+  .court-workspace .court-pane { display: none; }
+  .court-workspace.active-docket .court-index-pane,
+  .court-workspace.active-memorials .memorial-list-pane,
+  .court-workspace.active-review .review-pane { display: block; }
+  .court-pane { border: 0; }
+  .memorial-list-pane { border: 0; }
+  .review-context-strip { flex-direction: column; }
+  .review-context-strip span:last-child { margin-left: 0; }
+}
+
+@media (min-width: 840px) {
+  .workspace-pane-tabs { display: none; }
+  .court-workspace { grid-template-columns: minmax(250px, 0.7fr) minmax(0, 1.3fr); align-items: start; }
+  .court-index-pane { grid-column: 1; grid-row: 1 / span 2; }
+  .memorial-list-pane { grid-column: 1; grid-row: 3; border-top: 1px solid var(--rule); }
+  .review-pane { position: sticky; top: 64px; grid-column: 2; grid-row: 1 / span 3; max-height: calc(100dvh - 64px); overflow: auto; }
+  .court-index-pane { max-height: calc(100dvh - 64px); overflow: auto; }
+}
+
+@media (min-width: 1260px) {
+  .court-workspace { grid-template-columns: minmax(230px, 0.68fr) minmax(360px, 0.95fr) minmax(450px, 1.37fr); align-items: stretch; }
+  .court-index-pane { grid-column: 1; grid-row: 1; max-height: none; overflow: visible; }
+  .memorial-list-pane { grid-column: 2; grid-row: 1; border-top: 0; }
+  .review-pane { grid-column: 3; grid-row: 1; max-height: none; min-height: calc(100dvh - 160px); }
+}
+
+@media (max-width: 520px) {
+  .court-masthead h1 { font-size: 2.15rem; }
+  .court-masthead p:not(.eyebrow) { font-size: 0.78rem; }
+  .artifact-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dispatch-action-grid { grid-template-columns: 1fr; }
+  .ministry-report-heading .badge { max-width: 4.2rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memorial-card { transition: none; }
+}
