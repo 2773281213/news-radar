@@ -2,8 +2,6 @@
 
 面向 7×24 小时新闻工作的聚合、去重、事件聚类、多源核验与简报 Agent。系统保留原始链接和时间戳，把“已确认”“存在争议”“尚待核实”分开呈现，避免把单一来源直接改写成事实结论。
 
-线上地址：<https://news.11451405.xyz>
-
 ## 主要能力
 
 - RSS、JSON Feed、GDELT、Bluesky、Mastodon、Telegram Web 等来源适配
