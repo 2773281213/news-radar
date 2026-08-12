@@ -50,13 +50,27 @@ function RuntimeStatus() {
   const online = useOnlineStatus();
   const healthState = useApi<HealthDTO | { data: HealthDTO }>(API_ROUTES.health);
   const health = unwrapItem(healthState.data);
-  const ready = online && Boolean(health?.ok);
+  const apiReady = online && Boolean(health?.ok);
+  const ready = apiReady && Boolean(health?.scheduler.running);
+  const schedulerPaused = apiReady && !health?.scheduler.running;
+
+  useEffect(() => {
+    const refresh = () => {
+      if (document.visibilityState === "visible") healthState.reload();
+    };
+    const timer = window.setInterval(refresh, 30_000);
+    document.addEventListener("visibilitychange", refresh);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", refresh);
+    };
+  }, [healthState.reload]);
 
   return (
     <div className="runtime-status" aria-live="polite">
       <div className="runtime-status-line">
-        <span className={cx("live-dot", ready ? "is-live" : "is-muted")} aria-hidden="true" />
-        <strong>{!online ? "离线" : healthState.error ? "接口待连接" : ready ? "雷达在线" : "正在校验"}</strong>
+        <span className={cx("live-dot", ready && "is-live", schedulerPaused && "is-warning")} aria-hidden="true" />
+        <strong>{!online ? "离线" : healthState.error ? "接口待连接" : schedulerPaused ? "采集已暂停" : ready ? "雷达在线" : "正在校验"}</strong>
       </div>
       {health ? (
         <p title={formatDateTime(health.now, timeZone)}>

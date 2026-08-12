@@ -269,6 +269,17 @@ test("三省六部中枢和六部筛选真实渲染", async ({ page }, testInfo)
   await page.goto("/workflow");
   await expect(page.getByRole("heading", { name: "实时奏议台" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "待阅奏折" })).toBeVisible();
+  const allFilter = page.getByRole("button", { name: /全部\s+1/ });
+  const activeFilter = page.getByRole("button", { name: /待推进\s+0/ });
+  await expect(allFilter).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: /多方就地区安全事件发布最新声明/ })).toBeVisible();
+  if (testInfo.project.name !== "mobile") {
+    await expect(page.getByRole("button", { name: "上一件奏折" })).toBeDisabled();
+    await expect(page.getByRole("button", { name: "下一件奏折" })).toBeDisabled();
+  }
+  await activeFilter.click();
+  await expect(page.getByRole("heading", { name: "当前筛选下没有奏折" })).toBeVisible();
+  await allFilter.click();
   await expect(page.getByRole("button", { name: /多方就地区安全事件发布最新声明/ })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   if (testInfo.project.name === "mobile") {
@@ -278,6 +289,10 @@ test("三省六部中枢和六部筛选真实渲染", async ({ page }, testInfo)
       await paneTabs.nth(index).click();
       await expect(paneTabs.nth(index)).toHaveAttribute("aria-pressed", "true");
       await expect(page.locator(`[data-pane="${pane}"]`)).toBeVisible();
+      if (pane === "review") {
+        await expect(page.getByRole("button", { name: "上一件奏折" })).toBeDisabled();
+        await expect(page.getByRole("button", { name: "下一件奏折" })).toBeDisabled();
+      }
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     }
   }

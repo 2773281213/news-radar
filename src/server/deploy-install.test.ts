@@ -8,9 +8,13 @@ const helperPath = resolve(root, "deploy", "preserve-hashed-assets.sh");
 const installSource = readFileSync(resolve(root, "deploy", "install.sh"), "utf8");
 const schedulerUnitSource = readFileSync(resolve(root, "deploy", "news-radar-scheduler.service"), "utf8");
 const packageSource = readFileSync(resolve(root, "scripts", "package-release.mjs"), "utf8");
+const buildSource = readFileSync(resolve(root, "scripts", "build-server.mjs"), "utf8");
 const viteSource = readFileSync(resolve(root, "vite.config.ts"), "utf8");
 const resetPath = resolve(root, "deploy", "reset-news-data.sh");
 const resetSource = readFileSync(resetPath, "utf8");
+const nginxTemplateSource = readFileSync(resolve(root, "deploy", "nginx-news"), "utf8");
+const certwatchPath = resolve(root, "deploy", "news-radar-certwatch.sh");
+const certwatchSource = readFileSync(certwatchPath, "utf8");
 
 function shellQuote(value: string) {
   return `'${value.replaceAll("'", `'\\''`)}'`;
@@ -86,6 +90,20 @@ describe("release installer static asset compatibility", () => {
     expect(schedulerUnitSource).toContain("IOSchedulingClass=best-effort");
     expect(schedulerUnitSource).toContain("IOSchedulingPriority=7");
     expect(schedulerUnitSource).not.toContain("IOSchedulingClass=idle");
+    expect(installSource).toContain("News Radar 要求 Node.js 20 或更高版本");
+    expect(installSource).toContain("ORIGIN_CERT=");
+    expect(installSource).toContain("stream_mode=0");
+    expect(installSource).toContain("stream_mode=1");
+    expect(installSource).toContain("__HTTPS_LISTEN_IPV4__");
+    expect(installSource).toContain("__HTTPS_LISTEN_IPV6__");
+    expect(nginxTemplateSource).toContain("__CERT_FULLCHAIN__");
+    expect(nginxTemplateSource).toContain("__CERT_PRIVKEY__");
+    expect(certwatchSource).toContain("news-radar-origin.crt");
+    expect(certwatchSource).toContain("/etc/letsencrypt/live/$DOMAIN");
+    expect(buildSource).toContain("copyDirectory");
+    expect(buildSource).not.toContain("cpSync(");
+    expect(packageSource).toContain("copyEntry");
+    expect(packageSource).not.toContain("cpSync(");
 
     const sourceIndex = installSource.indexOf('source "$RELEASE_DIR/deploy/preserve-hashed-assets.sh"');
     const preserveIndex = installSource.indexOf('preserve_hashed_assets "$RELEASES_ROOT" "$RELEASE_DIR"');
@@ -96,6 +114,13 @@ describe("release installer static asset compatibility", () => {
     expect(preserveIndex).toBeGreaterThan(sourceIndex);
     expect(preserveIndex).toBeLessThan(ownershipIndex);
     expect(preserveIndex).toBeLessThan(activationIndex);
+
+    if (bashAvailable) {
+      for (const script of [resetPath, helperPath, certwatchPath, resolve(root, "deploy", "install.sh")]) {
+        const result = runBash(`bash -n ${shellQuote(linuxPath(script))}`);
+        expect(result.status, `${script}\n${result.stdout}\n${result.stderr}`).toBe(0);
+      }
+    }
   });
 
   it.skipIf(!bashAvailable)("preserves only regular hashed JS/CSS files without clobbering", () => {

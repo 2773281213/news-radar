@@ -1,0 +1,5 @@
+* text=auto
+*.sh text eol=lf
+deploy/*.service text eol=lf
+deploy/*.timer text eol=lf
+deploy/nginx-* text eol=lf

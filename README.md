@@ -10,6 +10,7 @@
 - 可审计的三省工作流：中书拟稿、门下封驳/准奏、尚书下令与成报
 - 六部真实并行办理：来源身份、经济、外交社会、冲突安全、法律核查、科技灾害均生成独立具报
 - ArchiveAssistant 思路的主从阅读工作区：宽屏三栏、中屏双栏、移动端案簿/奏折/批红单窗切换
+- 奏折队列按待推进、待处置、已成报筛选，并支持上一件/下一件连续审阅
 - 中枢总览、六部工作台、实时事件、事件审议记录、搜索、简报与来源健康度
 - 可选 Anthropic、OpenAI 兼容接口或 Ollama；未配置模型时自动使用抽取式降级
 - Telegram、邮件和 Web Push 提醒通道
@@ -83,7 +84,7 @@ Service Worker 对页面导航采用 network-first，并以 `cache: no-store` �
 
 ## 生产部署
 
-`deploy/install.sh` 面向当前 Ubuntu + Nginx + systemd 环境，使用不可变 release 目录和 `current` 符号链接：
+`deploy/install.sh` 面向 Ubuntu + Nginx + systemd 环境，使用不可变 release 目录和 `current` 符号链接；同时兼容普通 HTTP vhost 与 nginx stream SNI 分流拓扑：
 
 ```bash
 npm run build
@@ -100,7 +101,7 @@ sudo bash deploy/install.sh /tmp/news-radar-release-<版本>-<release-id>.tgz <r
 4. 安装并校验 Nginx 配置；
 5. 先启动只承载 API/UI 的 `news-radar.service`，健康后再启动低优先级的 `news-radar-scheduler.service`；
 6. 在失败时统一恢复上一 release、systemd unit 和 Nginx 配置；
-7. 通过证书监视器签发并切换独立 HTTPS 证书。
+7. 已有证书时直接复用；首次部署先生成独立的短期源站证书，再由证书监视器签发并原子切换到专属 HTTPS 证书。
 
 生产运维：
 

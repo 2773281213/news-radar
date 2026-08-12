@@ -12,6 +12,10 @@ ENV_FILE="/etc/news-radar.env"
 NGINX_CONF="/etc/nginx/nginx.conf"
 NGINX_SITE="/etc/nginx/sites-available/news"
 NGINX_ENABLED="/etc/nginx/sites-enabled/news"
+ORIGIN_CERT="/etc/nginx/ssl/news-radar-origin.crt"
+ORIGIN_KEY="/etc/nginx/ssl/news-radar-origin.key"
+LE_CERT="/etc/letsencrypt/live/news.11451405.xyz/fullchain.pem"
+LE_KEY="/etc/letsencrypt/live/news.11451405.xyz/privkey.pem"
 SERVICE_UNIT="/etc/systemd/system/news-radar.service"
 SCHEDULER_SERVICE_UNIT="/etc/systemd/system/news-radar-scheduler.service"
 CERTWATCH_SCRIPT="/usr/local/bin/news-radar-certwatch.sh"
@@ -124,6 +128,17 @@ trap on_exit EXIT
 
 if [[ "${EUID}" -ne 0 ]]; then
   echo "install.sh 必须以 root 运行" >&2
+  exit 1
+fi
+for command_name in node npm nginx sqlite3 curl openssl tar sha256sum runuser; do
+  if ! command -v "$command_name" >/dev/null 2>&1; then
+    echo "服务器缺少部署依赖：$command_name" >&2
+    exit 1
+  fi
+done
+node_major="$(node -p 'Number(process.versions.node.split(".")[0])')"
+if [[ ! "$node_major" =~ ^[0-9]+$ || "$node_major" -lt 20 ]]; then
+  echo "News Radar 要求 Node.js 20 或更高版本，当前为 $(node --version)" >&2
   exit 1
 fi
 if [[ ! "$RELEASE_ID" =~ ^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$ ]]; then
@@ -347,13 +362,40 @@ if [[ "$scheduler_healthy" -ne 1 ]]; then
   exit 1
 fi
 
-install -m 0644 "$RELEASE_DIR/deploy/nginx-news" "$NGINX_SITE"
-ln -sfn "$NGINX_SITE" "$NGINX_ENABLED"
-if ! grep -qE '^[[:space:]]*news\.11451405\.xyz[[:space:]]+127\.0\.0\.1:8443;' "$NGINX_CONF"; then
-  if ! grep -qE '^[[:space:]]*question\.11451405\.xyz[[:space:]]+127\.0\.0\.1:8443;' "$NGINX_CONF"; then
-    echo "无法定位 nginx SNI map 插入点" >&2
-    exit 1
+install -d -m 0755 /var/www/certbot/.well-known/acme-challenge /etc/nginx/ssl
+if [[ -f "$LE_CERT" && -f "$LE_KEY" ]]; then
+  certificate_path="$LE_CERT"
+  certificate_key_path="$LE_KEY"
+else
+  certificate_path="$ORIGIN_CERT"
+  certificate_key_path="$ORIGIN_KEY"
+  if [[ ! -s "$ORIGIN_CERT" || ! -s "$ORIGIN_KEY" ]]; then
+    openssl req -x509 -nodes -newkey rsa:2048 -days 30 \
+      -subj "/CN=news.11451405.xyz" \
+      -addext "subjectAltName=DNS:news.11451405.xyz" \
+      -keyout "$ORIGIN_KEY" -out "$ORIGIN_CERT" >/dev/null 2>&1
+    chmod 0600 "$ORIGIN_KEY"
+    chmod 0644 "$ORIGIN_CERT"
   fi
+fi
+
+https_listen_ipv4='listen 443 ssl;'
+https_listen_ipv6='listen [::]:443 ssl;'
+stream_mode=0
+if grep -qE '^[[:space:]]*question\.11451405\.xyz[[:space:]]+127\.0\.0\.1:8443;' "$NGINX_CONF"; then
+  https_listen_ipv4='listen 127.0.0.1:8443 ssl;'
+  https_listen_ipv6=''
+  stream_mode=1
+fi
+sed \
+  -e "s#__HTTPS_LISTEN_IPV4__#$https_listen_ipv4#" \
+  -e "s#__HTTPS_LISTEN_IPV6__#$https_listen_ipv6#" \
+  -e "s#__CERT_FULLCHAIN__#$certificate_path#" \
+  -e "s#__CERT_PRIVKEY__#$certificate_key_path#" \
+  "$RELEASE_DIR/deploy/nginx-news" > "$NGINX_SITE"
+chmod 0644 "$NGINX_SITE"
+ln -sfn "$NGINX_SITE" "$NGINX_ENABLED"
+if [[ "$stream_mode" -eq 1 ]] && ! grep -qE '^[[:space:]]*news\.11451405\.xyz[[:space:]]+127\.0\.0\.1:8443;' "$NGINX_CONF"; then
   sed -i '/^[[:space:]]*question\.11451405\.xyz[[:space:]]*127\.0\.0\.1:8443;/a\        news.11451405.xyz              127.0.0.1:8443;' "$NGINX_CONF"
 fi
 nginx -t

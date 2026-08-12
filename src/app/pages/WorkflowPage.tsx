@@ -1,6 +1,6 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Link } from "wouter";
-import type { EventWorkflowDTO, WorkflowDashboardDTO } from "../../shared/types";
+import type { EventWorkflowDTO, RoutedEventItem, WorkflowDashboardDTO } from "../../shared/types";
 import {
   DEPARTMENT_LABELS,
   MINISTRY_DESCRIPTIONS,
@@ -20,12 +20,27 @@ import {
 } from "../components/ui";
 
 type WorkspacePane = "docket" | "memorials" | "review";
+type QueueFilter = "active" | "attention" | "completed" | "all";
 
 const PANE_LABELS: Record<WorkspacePane, string> = {
   docket: "案簿",
   memorials: "奏折",
   review: "批红",
 };
+
+const QUEUE_FILTERS: Array<{ key: QueueFilter; label: string }> = [
+  { key: "active", label: "待推进" },
+  { key: "attention", label: "待处置" },
+  { key: "completed", label: "已成报" },
+  { key: "all", label: "全部" },
+];
+
+function matchesQueueFilter(event: RoutedEventItem, filter: QueueFilter): boolean {
+  if (filter === "all") return true;
+  if (filter === "completed") return event.workflowStatus === "completed";
+  if (filter === "attention") return event.workflowStatus === "remanded" || event.workflowStatus === "failed";
+  return event.workflowStatus !== "completed" && event.workflowStatus !== "remanded" && event.workflowStatus !== "failed";
+}
 
 const STAGE_META: Array<{ key: "zhongshu" | "menxia" | "shangshu"; index: string; title: string; action: string }> = [
   { key: "zhongshu", index: "壹", title: "中书拟稿", action: "编录证据" },
@@ -39,7 +54,22 @@ export function WorkflowPage() {
   const dashboard = dashboardState.data;
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [activePane, setActivePane] = useState<WorkspacePane>("memorials");
-  const selectedEvent = dashboard?.recentDispatches.find((item) => item.id === selectedId) || dashboard?.recentDispatches[0];
+  const [queueFilter, setQueueFilter] = useState<QueueFilter>("all");
+  const queueCounts = useMemo(() => {
+    const events = dashboard?.recentDispatches || [];
+    return {
+      active: events.filter((event) => matchesQueueFilter(event, "active")).length,
+      attention: events.filter((event) => matchesQueueFilter(event, "attention")).length,
+      completed: events.filter((event) => matchesQueueFilter(event, "completed")).length,
+      all: events.length,
+    };
+  }, [dashboard?.recentDispatches]);
+  const visibleEvents = useMemo(
+    () => (dashboard?.recentDispatches || []).filter((event) => matchesQueueFilter(event, queueFilter)),
+    [dashboard?.recentDispatches, queueFilter],
+  );
+  const selectedEvent = visibleEvents.find((item) => item.id === selectedId) || visibleEvents[0];
+  const selectedIndex = selectedEvent ? visibleEvents.findIndex((item) => item.id === selectedEvent.id) : -1;
   const auditState = useApi<EventWorkflowDTO>(selectedEvent ? API_ROUTES.eventWorkflow(selectedEvent.id) : null);
 
   useEffect(() => {
@@ -47,16 +77,22 @@ export function WorkflowPage() {
   }, []);
 
   useEffect(() => {
-    if (!dashboard?.recentDispatches.length) {
+    if (!visibleEvents.length) {
       setSelectedId(null);
       return;
     }
-    setSelectedId((current) => dashboard.recentDispatches.some((event) => event.id === current) ? current : dashboard.recentDispatches[0].id);
-  }, [dashboard]);
+    setSelectedId((current) => visibleEvents.some((event) => event.id === current) ? current : visibleEvents[0].id);
+  }, [visibleEvents]);
 
   const selectEvent = (id: string) => {
     setSelectedId(id);
     setActivePane("review");
+  };
+
+  const moveSelection = (offset: number) => {
+    const nextIndex = selectedIndex + offset;
+    const nextEvent = visibleEvents[nextIndex];
+    if (nextEvent) selectEvent(nextEvent.id);
   };
 
   return (
@@ -134,8 +170,24 @@ export function WorkflowPage() {
 
           <section className="court-pane memorial-list-pane" data-pane="memorials" aria-label="奏折队列">
             <PaneHeader kicker="奏折 / MEMORIALS" title="待阅奏折" subtitle={`${dashboard.recentDispatches.length} 件最近递送`} action={<Badge tone="accent">LIVE</Badge>} />
+            <div className="memorial-queue-toolbar">
+              <div className="queue-filter" role="group" aria-label="按办理状态筛选奏折">
+                {QUEUE_FILTERS.map((filter) => (
+                  <button
+                    key={filter.key}
+                    type="button"
+                    className={queueFilter === filter.key ? "is-active" : undefined}
+                    aria-pressed={queueFilter === filter.key}
+                    onClick={() => setQueueFilter(filter.key)}
+                  >
+                    {filter.label}<span>{queueCounts[filter.key]}</span>
+                  </button>
+                ))}
+              </div>
+              <span className="queue-result-count">显示 {visibleEvents.length} 件</span>
+            </div>
             <div className="memorial-list">
-              {dashboard.recentDispatches.length ? dashboard.recentDispatches.map((event, index) => (
+              {visibleEvents.length ? visibleEvents.map((event, index) => (
                 <button
                   className={`memorial-card${event.id === selectedEvent?.id ? " is-selected" : ""}`}
                   key={event.id}
@@ -155,7 +207,7 @@ export function WorkflowPage() {
                     <span>{event.articleCount} 篇材料 · {event.confirmedCount} 项确认 · {event.disputedCount} 项争议</span>
                   </span>
                 </button>
-              )) : <EmptyState title="尚无递送奏折" description="调度器完成第一批三省审议后，奏折会在这里按最近更新排列。" />}
+              )) : <EmptyState title="当前筛选下没有奏折" description="切换办理状态，或等待调度器递送新的审议结果。" />}
             </div>
             <footer className="memorial-list-footer"><Link href="/live">进入实时事件簿</Link><span>点击奏折在右侧展开批红</span></footer>
           </section>
@@ -167,7 +219,16 @@ export function WorkflowPage() {
                   kicker="批红 / REVIEW"
                   title={selectedEvent.title}
                   subtitle={`${selectedEvent.countries.join("、") || "未标明地区"} · ${selectedEvent.topics.join(" / ") || "待归类"}`}
-                  action={<Link className="review-open-link" href={`/events/${encodeURIComponent(selectedEvent.id)}`}>全案 ↗</Link>}
+                  action={(
+                    <div className="review-actions">
+                      <div className="review-stepper" role="group" aria-label="连续审阅奏折">
+                        <button type="button" onClick={() => moveSelection(-1)} disabled={selectedIndex <= 0} aria-label="上一件奏折" title="上一件奏折">←</button>
+                        <span>{selectedIndex + 1}/{visibleEvents.length}</span>
+                        <button type="button" onClick={() => moveSelection(1)} disabled={selectedIndex < 0 || selectedIndex >= visibleEvents.length - 1} aria-label="下一件奏折" title="下一件奏折">→</button>
+                      </div>
+                      <Link className="review-open-link" href={`/events/${encodeURIComponent(selectedEvent.id)}`}>全案 ↗</Link>
+                    </div>
+                  )}
                 />
                 <div className="review-context-strip">
                   <span>{selectedEvent.oneLiner || "尚无成句摘要，右侧显示当前证据和工作流产物。"}</span>

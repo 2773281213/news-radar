@@ -144,6 +144,11 @@
   padding-bottom: 0.8rem;
 }
 
+.court-pane-header > div:first-child {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
 .court-pane-header h2 {
   overflow: hidden;
   margin: 0;
@@ -273,6 +278,43 @@
 .court-quick-links a:hover { color: var(--accent-strong); }
 
 .memorial-list-pane { border-right: 1px solid var(--rule); border-left: 1px solid var(--rule); }
+.memorial-queue-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
+}
+
+.queue-filter {
+  display: inline-grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  min-width: 0;
+  border: 1px solid var(--rule);
+}
+
+.queue-filter button {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  border: 0;
+  border-right: 1px solid var(--rule);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 0.66rem;
+  font-weight: 800;
+  padding: 0.35rem 0.45rem;
+  white-space: nowrap;
+}
+
+.queue-filter button:last-child { border-right: 0; }
+.queue-filter button:hover { color: var(--accent-strong); }
+.queue-filter button.is-active { background: var(--ink); color: var(--ivory); }
+.queue-filter button span { font-family: var(--font-code); font-size: 0.58rem; opacity: 0.72; }
+.queue-result-count { flex: 0 0 auto; color: var(--ink-faint); font-size: 0.62rem; }
 .memorial-list { display: grid; gap: 0.65rem; margin-top: 0.85rem; }
 
 .memorial-card {
@@ -302,6 +344,28 @@
 
 .memorial-list-footer { display: flex; justify-content: space-between; gap: 0.5rem; border-top: 1px solid var(--rule); color: var(--ink-faint); font-size: 0.66rem; margin-top: 1rem; padding-top: 0.65rem; }
 .memorial-list-footer a { color: var(--accent-strong); font-weight: 800; text-decoration: none; }
+
+.review-actions,
+.review-stepper {
+  display: flex;
+  align-items: center;
+}
+
+.review-actions { gap: 0.65rem; }
+.review-stepper { border: 1px solid var(--rule); background: var(--surface); }
+.review-stepper button {
+  display: inline-grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  color: var(--accent-strong);
+  font-size: 0.9rem;
+}
+.review-stepper button:hover:not(:disabled) { background: var(--light-gold); }
+.review-stepper button:disabled { color: var(--ink-faint); cursor: not-allowed; opacity: 0.45; }
+.review-stepper span { min-width: 2.6rem; color: var(--ink-faint); font-family: var(--font-code); font-size: 0.6rem; text-align: center; }
 
 .review-pane { background: var(--surface); }
 .review-context-strip { display: flex; justify-content: space-between; gap: 0.7rem; border-bottom: 1px solid var(--rule); color: var(--ink-soft); font-size: 0.72rem; padding: 0.65rem 0; }
@@ -427,6 +491,8 @@
   .artifact-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .dispatch-action-grid { grid-template-columns: 1fr; }
   .ministry-report-heading .badge { max-width: 4.2rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .memorial-queue-toolbar { align-items: stretch; flex-direction: column; }
+  .queue-result-count { align-self: flex-end; }
 }
 
 @media (prefers-reduced-motion: reduce) {

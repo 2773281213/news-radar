@@ -3287,6 +3287,11 @@ tbody tr:last-child > * {
   box-shadow: 0 0 0 3px rgb(98 200 103 / 16%);
 }
 
+.app-header .live-dot.is-warning {
+  background: #e5a93d;
+  box-shadow: 0 0 0 3px rgb(229 169 61 / 18%);
+}
+
 .shell-body {
   min-width: 0;
 }
@@ -3307,7 +3312,7 @@ tbody tr:last-child > * {
   display: none;
 }
 
-@media (min-width: 840px) {
+@media (min-width: 1120px) {
   .app-header .primary-nav {
     display: flex;
   }
@@ -3325,7 +3330,7 @@ tbody tr:last-child > * {
   }
 }
 
-@media (max-width: 839px) {
+@media (max-width: 1119px) {
   .app-header-inner {
     min-height: 58px;
   }

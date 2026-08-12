@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, relative, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 
@@ -66,6 +66,25 @@ function stagedFiles(directory) {
   return files;
 }
 
+function copyEntry(source, destination) {
+  const stat = lstatSync(source);
+  if (stat.isSymbolicLink()) throw new Error(`发布源包含符号链接：${relative(root, source)}`);
+  if (stat.isFile()) {
+    mkdirSync(dirname(destination), { recursive: true });
+    copyFileSync(source, destination);
+    return;
+  }
+  if (!stat.isDirectory()) throw new Error(`发布源包含不支持的文件类型：${relative(root, source)}`);
+
+  mkdirSync(destination, { recursive: true });
+  const entries = readdirSync(source, { withFileTypes: true });
+  for (const entry of entries) {
+    const sourcePath = resolve(source, entry.name);
+    const destinationPath = resolve(destination, entry.name);
+    copyEntry(sourcePath, destinationPath);
+  }
+}
+
 try {
   rmSync(stage, { recursive: true, force: true });
   rmSync(archiveTemp, { force: true });
@@ -80,8 +99,7 @@ try {
     const source = resolve(root, entry);
     const destination = resolve(stage, entry);
     if (!existsSync(source)) throw new Error(`发布源缺少必需路径：${entry}`);
-    mkdirSync(dirname(destination), { recursive: true });
-    cpSync(source, destination, { recursive: true });
+    copyEntry(source, destination);
   }
   for (const required of requiredReleaseFiles) {
     if (!existsSync(resolve(stage, required))) throw new Error(`发布暂存区缺少必需文件：${required}`);
