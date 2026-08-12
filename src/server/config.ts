@@ -38,6 +38,15 @@ export interface Config {
   version: string;
 }
 
+function packageVersion(): string {
+  try {
+    const manifest = JSON.parse(readFileSync(resolve(process.cwd(), "package.json"), "utf-8")) as { version?: unknown };
+    return typeof manifest.version === "string" && manifest.version.trim() ? manifest.version.trim() : "unknown";
+  } catch {
+    return "unknown";
+  }
+}
+
 /** 轻量 .env 解析（避免额外依赖）；不覆盖已有环境变量 */
 export function loadDotenv(path = ".env"): void {
   const p = resolve(process.cwd(), path);
@@ -96,6 +105,6 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     workflowBatchSize: bounded(env.WORKFLOW_BATCH_SIZE, 30, 1, 200),
     workflowLeaseSec: bounded(env.WORKFLOW_LEASE_SEC, 300, 30, 3600),
     workflowMaxAttempts: bounded(env.WORKFLOW_MAX_ATTEMPTS, 5, 1, 20),
-    version: "0.2.0",
+    version: env.APP_VERSION?.trim() || packageVersion(),
   };
 }

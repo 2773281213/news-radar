@@ -1,6 +1,6 @@
 {
   "name": "news-radar",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "private": true,
   "type": "module",
   "description": "新闻雷达 News Radar —— 7x24 实时新闻采集、多方核验与汇报 Agent",

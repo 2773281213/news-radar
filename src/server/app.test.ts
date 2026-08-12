@@ -38,12 +38,12 @@ describe("News Radar API", () => {
     };
 
     expect(readyResponse.status).toBe(200);
-    expect(await readyResponse.json()).toMatchObject({ ok: true, version: "0.2.0" });
+    expect(await readyResponse.json()).toMatchObject({ ok: true, version: "0.2.2" });
     expect(response.status).toBe(200);
     expect(body).toMatchObject({
       ok: true,
       db: true,
-      version: "0.2.0",
+      version: "0.2.2",
       scheduler: { running: false, lastTickAt: null },
       workflow: { backlog: 0, running: 0, remanded: 0, failed: 0, completed: 0 },
     });
