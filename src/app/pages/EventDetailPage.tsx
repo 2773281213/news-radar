@@ -6,6 +6,7 @@ import type {
   EventDetailDTO,
   EventSummaryDTO,
   EventWorkflowDTO,
+  FeaturedReportDTO,
   TimelineItem,
 } from "../../shared/types";
 import { PARTY_DISCLAIMER } from "../../shared/constants";
@@ -45,7 +46,7 @@ import {
 function SummarySection({ summary }: { summary: EventSummaryDTO }) {
   return (
     <section className="event-summary-section" aria-labelledby="event-summary-title">
-      <SectionHeader id="event-summary-title" eyebrow="已知情况" title="事件摘要" />
+      <SectionHeader id="event-summary-title" eyebrow="新闻主要内容" title="事件摘要" />
       <p className="summary-one-liner">
         {summary.oneLiner}
       </p>
@@ -144,6 +145,45 @@ function SummarySection({ summary }: { summary: EventSummaryDTO }) {
         </aside>
       ) : null}
     </section>
+  );
+}
+
+function FeaturedReport({ report }: { report: FeaturedReportDTO | null }) {
+  if (!report) {
+    return (
+      <Panel className="featured-report-panel">
+        <SectionHeader eyebrow="来源优选" title="最高可信报道" />
+        <p className="muted-copy">当前事件尚无可公开访问的代表报道。</p>
+      </Panel>
+    );
+  }
+  const tone = report.credibility === "high" ? "good" : report.credibility === "medium" ? "evidence" : "warning";
+  const label = report.credibility === "high" ? "来源可信度高" : report.credibility === "medium" ? "来源可信度中等" : "来源信息有限";
+  return (
+    <Panel className="featured-report-panel" aria-labelledby="featured-report-title">
+      <SectionHeader
+        id="featured-report-title"
+        eyebrow="来源优选"
+        title="最高可信报道"
+        description="按来源身份、可用性、原创性及已确认主张关联度综合排序。"
+      />
+      <div className="featured-report-badges">
+        <Badge tone={tone}>{label}</Badge>
+        {report.isPrimary ? <Badge tone="evidence">第一手材料</Badge> : null}
+        {!report.isReprint ? <Badge tone="neutral">非转载</Badge> : null}
+      </div>
+      <h3><ExternalLink href={report.citation.url}>{report.citation.title}</ExternalLink></h3>
+      <p className="featured-report-source">
+        {report.citation.sourceName} · {sourceCategoryLabel(report.citation.sourceCategory)}
+      </p>
+      <p className="featured-report-excerpt">{report.excerpt}</p>
+      {report.reasons.length ? (
+        <ul className="featured-report-reasons">
+          {report.reasons.map((reason) => <li key={reason}>{reason}</li>)}
+        </ul>
+      ) : null}
+      <p className="featured-report-note">此排序评价来源与材料质量，不代表报道中的全部主张已经独立证实。</p>
+    </Panel>
   );
 }
 
@@ -422,14 +462,17 @@ export function EventDetailPage({ eventId }: { eventId: string }) {
           </Panel>
         ) : null}
 
+        <section className="event-reading-layout" aria-label="新闻主要内容与最高可信报道">
+          {event.summary ? (
+            <SummarySection summary={event.summary} />
+          ) : (
+            <EmptyState title="摘要尚未生成" description="可以先阅读代表报道、下方主张、时间线与原始引用。" />
+          )}
+          <FeaturedReport report={event.featuredReport} />
+        </section>
+
         <div className="event-detail-layout">
           <div className="event-detail-main">
-            {event.summary ? (
-              <SummarySection summary={event.summary} />
-            ) : (
-              <EmptyState title="摘要尚未生成" description="可以先阅读下方主张、时间线与原始引用。" />
-            )}
-
             <section className="content-section" aria-labelledby="claims-title">
               <SectionHeader
                 id="claims-title"

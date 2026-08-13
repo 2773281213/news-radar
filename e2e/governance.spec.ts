@@ -330,16 +330,33 @@ test("事件详情展示可审计的三省迁移", async ({ page }, testInfo) =>
       coverage: { present: ["通讯社", "外国政府机构"], gaps: ["本地媒体"], byCategory: { wire: 3, gov_intl: 2 }, independentFamilies: 3 },
       delta: null,
       citations: [],
+      featuredReport: {
+        citation: citedArticle,
+        excerpt: "通讯社梳理了多方声明、行动时间线与仍待独立核验的关键结果。",
+        credibility: "high",
+        reasons: ["关联已交叉确认主张", "来源身份已核验", "来源当前可稳定访问", "非转载稿"],
+        isPrimary: false,
+        isReprint: false,
+      },
       summaryEngine: "extractive",
     },
   }));
 
   await page.goto("/events/evt-demo");
+  await expect(page.getByRole("heading", { name: "事件摘要" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "最高可信报道" })).toBeVisible();
+  await expect(page.getByText("通讯社梳理了多方声明、行动时间线与仍待独立核验的关键结果。"))
+    .toBeVisible();
   await expect(page.getByRole("heading", { name: "三省审议记录" })).toBeVisible();
   await expect(page.getByText("门下准奏", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "尚书执行令" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "专责办理簿" })).toBeVisible();
   await expect(page.getByText("六部专责", { exact: true })).toBeVisible();
+  const readingBottom = await page.locator(".event-reading-layout").evaluate((element) => element.getBoundingClientRect().bottom);
+  const workflowTop = await page.getByRole("heading", { name: "三省审议记录" }).evaluate((element) => element.getBoundingClientRect().top);
+  expect(readingBottom).toBeLessThanOrEqual(workflowTop);
+  const titleSize = Number.parseFloat(await page.locator(".event-detail-page .page-header h1").evaluate((element) => getComputedStyle(element).fontSize));
+  expect(titleSize).toBeLessThanOrEqual(32);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   await page.screenshot({ path: `test-results/screenshots/event-workflow-${testInfo.project.name}.png`, fullPage: true });
 });

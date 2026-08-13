@@ -27,6 +27,7 @@ import {
   formatRelativeTime,
   getHostname,
   safeExternalUrl,
+  sourceCategoryLabel,
   topicLabel,
   uniqueById,
 } from "../utils";
@@ -380,7 +381,15 @@ export function EventCard({ event, featured = false, routing }: { event: EventLi
       <h3>
         <Link href={`/events/${encodeURIComponent(event.id)}`}>{event.title}</Link>
       </h3>
+      <span className="event-content-label">新闻主要内容</span>
       <p className="event-summary">{event.oneLiner || "摘要尚未形成，事件材料仍在归并。"}</p>
+      {event.sourceTrail[0] ? (
+        <div className="event-best-report">
+          <span>最高可信报道</span>
+          <ExternalLink href={event.sourceTrail[0].url}>{event.sourceTrail[0].title}</ExternalLink>
+          <small>{event.sourceTrail[0].sourceName} · {sourceCategoryLabel(event.sourceTrail[0].sourceCategory)}</small>
+        </div>
+      ) : null}
       {event.topics.length || event.countries.length ? (
         <div className="tag-row" aria-label="事件标签">
           {event.topics.slice(0, 4).map((topic) => (

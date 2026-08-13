@@ -106,6 +106,7 @@ function detail(): EventDetailDTO {
     coverage: { present: ["公开数据"], gaps: [], byCategory: { data: 1 }, independentFamilies: 2 },
     delta: null,
     citations: [citation],
+    featuredReport: null,
     summaryEngine: "extractive",
     sourceTrail: [citation],
   };

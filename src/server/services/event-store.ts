@@ -22,6 +22,7 @@ import type {
   EventListItem,
   EventSummaryDTO,
   EvidenceDTO,
+  FeaturedReportDTO,
   SourceCategory,
   TimelineItem,
 } from "../../shared/types";
@@ -29,6 +30,7 @@ import { CATEGORY_LABELS, PARTY_LABELS } from "../../shared/constants";
 import { shortId } from "../lib/hash";
 import { nowIso } from "../lib/time";
 import { ftsTokenize } from "../lib/textsim";
+import { stripHtml, textExcerpt } from "../lib/sanitize";
 import type { ArticleWithSource } from "./article-store";
 import type { ClusterEventInput } from "../pipeline/cluster";
 import type { VerificationEvidence } from "../pipeline/verify";
@@ -565,10 +567,22 @@ export class EventStore {
                s.is_party,
                s.party_of,
                s.is_primary,
+               s.verif_status,
+               s.health,
                ROW_NUMBER() OVER (
                  PARTITION BY ea.event_id,
                    COALESCE(NULLIF(a.wire_family, ''), NULLIF(a.reprint_of, ''), NULLIF(s.family_id, ''), 'source:' || s.id)
-                 ORDER BY s.is_primary DESC, a.is_reprint ASC, COALESCE(a.published_at, a.first_seen_at) DESC, a.id ASC
+                 ORDER BY
+                   CASE s.verif_status WHEN 'verified' THEN 2 WHEN 'pending' THEN 1 ELSE 0 END DESC,
+                   CASE s.health WHEN 'ok' THEN 2 WHEN 'degraded' THEN 1 ELSE 0 END DESC,
+                   s.is_party ASC,
+                   CASE s.category
+                     WHEN 'factcheck' THEN 12 WHEN 'intl_org' THEN 11 WHEN 'data' THEN 10 WHEN 'wire' THEN 9
+                     WHEN 'gov_cn' THEN 8 WHEN 'gov_intl' THEN 8 WHEN 'official_media_cn' THEN 7
+                     WHEN 'intl_media' THEN 7 WHEN 'market_media_cn' THEN 6 WHEN 'local_media' THEN 5
+                     WHEN 'party_media' THEN 2 ELSE 1
+                   END DESC,
+                   s.is_primary DESC, a.is_reprint ASC, COALESCE(a.published_at, a.first_seen_at) DESC, a.id ASC
                ) AS family_rank
         FROM event_articles ea
         JOIN articles a ON a.id = ea.article_id
@@ -577,7 +591,17 @@ export class EventStore {
       ), event_ranked AS (
         SELECT *, ROW_NUMBER() OVER (
           PARTITION BY event_id
-          ORDER BY is_primary DESC, is_reprint ASC, COALESCE(published_at, first_seen_at) DESC, article_id ASC
+          ORDER BY
+            CASE verif_status WHEN 'verified' THEN 2 WHEN 'pending' THEN 1 ELSE 0 END DESC,
+            CASE health WHEN 'ok' THEN 2 WHEN 'degraded' THEN 1 ELSE 0 END DESC,
+            is_party ASC,
+            CASE source_category
+              WHEN 'factcheck' THEN 12 WHEN 'intl_org' THEN 11 WHEN 'data' THEN 10 WHEN 'wire' THEN 9
+              WHEN 'gov_cn' THEN 8 WHEN 'gov_intl' THEN 8 WHEN 'official_media_cn' THEN 7
+              WHEN 'intl_media' THEN 7 WHEN 'market_media_cn' THEN 6 WHEN 'local_media' THEN 5
+              WHEN 'party_media' THEN 2 ELSE 1
+            END DESC,
+            is_primary DESC, is_reprint ASC, COALESCE(published_at, first_seen_at) DESC, article_id ASC
         ) AS event_rank
         FROM family_ranked
         WHERE family_rank = 1
@@ -757,6 +781,7 @@ export class EventStore {
         ? { sinceVersion: lastVersion.version, added: changes.added, changed: changes.changed, removed: changes.removed }
         : null,
       citations,
+      featuredReport: selectFeaturedReport(articleRows, claimDtos),
       summaryEngine: event.summaryEngine as "ai" | "extractive",
     };
     return { event, detail, articles: articleRows };
@@ -1044,6 +1069,74 @@ function toCitation(row: ArticleWithSource): Citation {
     publishedAt: row.publishedAt,
     isParty: row.sourceIsParty,
     partyOf: row.sourcePartyOf,
+  };
+}
+
+const SOURCE_CREDIBILITY_WEIGHT: Partial<Record<SourceCategory, number>> = {
+  factcheck: 28,
+  intl_org: 26,
+  data: 24,
+  wire: 22,
+  gov_cn: 20,
+  gov_intl: 20,
+  official_media_cn: 18,
+  intl_media: 18,
+  market_media_cn: 15,
+  local_media: 13,
+  party_media: 4,
+  social_cn: 2,
+  social: 2,
+};
+
+export function selectFeaturedReport(rows: ArticleWithSource[], claims_: ClaimDTO[]): FeaturedReportDTO | null {
+  if (!rows.length) return null;
+  const corroboratedArticleIds = new Set(
+    claims_
+      .filter((claim) => claim.status === "corroborated")
+      .flatMap((claim) => claim.evidence.map((evidence) => evidence.articleId))
+  );
+  const ranked = rows.map((row) => {
+    const category = row.sourceCategory as SourceCategory;
+    const reasons: string[] = [];
+    let score = SOURCE_CREDIBILITY_WEIGHT[category] || 0;
+    if (corroboratedArticleIds.has(row.id)) {
+      score += 50;
+      reasons.push("关联已交叉确认主张");
+    }
+    if (row.sourceVerifStatus === "verified") {
+      score += 24;
+      reasons.push("来源身份已核验");
+    }
+    if (row.sourceHealth === "ok") {
+      score += 16;
+      reasons.push("来源当前可稳定访问");
+    }
+    if (!row.sourceIsParty) {
+      score += 12;
+      reasons.push("非事件相关方媒体");
+    }
+    if (row.sourceIsPrimary) {
+      score += 12;
+      reasons.push("包含第一手材料");
+    }
+    if (!row.isReprint) {
+      score += 8;
+      reasons.push("非转载稿");
+    }
+    if (row.paywalled) score -= 4;
+    return { row, score, reasons };
+  }).sort((a, b) => b.score - a.score
+    || String(b.row.publishedAt || b.row.firstSeenAt).localeCompare(String(a.row.publishedAt || a.row.firstSeenAt))
+    || a.row.id.localeCompare(b.row.id));
+  const best = ranked[0];
+  const rawExcerpt = stripHtml(best.row.excerpt || best.row.bodyText || best.row.title);
+  return {
+    citation: toCitation(best.row),
+    excerpt: textExcerpt(rawExcerpt, 460),
+    credibility: best.score >= 80 ? "high" : best.score >= 50 ? "medium" : "limited",
+    reasons: best.reasons.slice(0, 5),
+    isPrimary: best.row.sourceIsPrimary,
+    isReprint: best.row.isReprint,
   };
 }
 

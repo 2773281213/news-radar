@@ -38,12 +38,12 @@ describe("News Radar API", () => {
     };
 
     expect(readyResponse.status).toBe(200);
-    expect(await readyResponse.json()).toMatchObject({ ok: true, version: "0.2.2" });
+    expect(await readyResponse.json()).toMatchObject({ ok: true, version: "0.2.3" });
     expect(response.status).toBe(200);
     expect(body).toMatchObject({
       ok: true,
       db: true,
-      version: "0.2.2",
+      version: "0.2.3",
       scheduler: { running: false, lastTickAt: null },
       workflow: { backlog: 0, running: 0, remanded: 0, failed: 0, completed: 0 },
     });
@@ -229,6 +229,18 @@ describe("News Radar API", () => {
     expect(detail).not.toHaveProperty("articles");
     expect(detail?.coverage.independentFamilies).toBe(1);
     expect(detail?.delta).toMatchObject({ sinceVersion: event.version, added: ["当前版本"] });
+    expect(detail?.featuredReport).toMatchObject({
+      citation: {
+        articleId: "art_claim_batch_a",
+        sourceName: "证据批量测试源 A",
+        sourceCategory: "data",
+      },
+      credibility: "high",
+      excerpt: "Claim a 的证据摘要",
+      isPrimary: true,
+      isReprint: false,
+      reasons: expect.arrayContaining(["来源身份已核验", "来源当前可稳定访问", "包含第一手材料", "非转载稿"]),
+    });
     expect(detail?.claims.find((claim) => claim.id === firstClaim.id)?.evidence.map((item) => item.articleId))
       .toEqual(["art_claim_batch_a", "art_claim_batch_b"]);
     expect(detail?.claims.find((claim) => claim.id === secondClaim.id)?.evidence.map((item) => item.articleId))

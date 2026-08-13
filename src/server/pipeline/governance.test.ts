@@ -34,6 +34,7 @@ function detail(overrides: Partial<EventDetailDTO> = {}): EventDetailDTO {
     independentSourceCount: overrides.independentSourceCount ?? 2,
     unverifiedCount: overrides.unverifiedCount ?? 0,
     sourceTrail: overrides.sourceTrail ?? [],
+    featuredReport: overrides.featuredReport ?? null,
   };
 }
 

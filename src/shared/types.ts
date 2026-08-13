@@ -226,6 +226,15 @@ export interface EventVersionDelta {
   removed: string[];
 }
 
+export interface FeaturedReportDTO {
+  citation: Citation;
+  excerpt: string;
+  credibility: "high" | "medium" | "limited";
+  reasons: string[];
+  isPrimary: boolean;
+  isReprint: boolean;
+}
+
 export interface EventListItem {
   id: string;
   title: string;
@@ -260,6 +269,8 @@ export interface EventDetailDTO extends EventListItem {
   coverage: CoverageDTO;
   delta: EventVersionDelta | null;
   citations: Citation[];
+  /** 按来源身份、可用性、原创性与已确认主张关联度选出的优先阅读材料 */
+  featuredReport: FeaturedReportDTO | null;
   /** 摘要生成方式：ai 或抽取式 */
   summaryEngine: "ai" | "extractive";
 }
